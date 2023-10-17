@@ -1,0 +1,15 @@
+version: '3.5'
+services:
+  jmeter-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile       
+      args:
+        - JMETER_TEST_SCRIPT=${JMETER_TEST_SCRIPT}
+        - JMETER_TEST_SETTINGS=${JMETER_TEST_SETTINGS}
+    image: jmeter
+    container_name: jmeter-runner 
+    volumes:
+      - /opt/jmeter_automation/results:/opt/test_results
+    env_file:
+      - .env

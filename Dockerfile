@@ -1,18 +1,24 @@
-# inspired by https://github.com/hauptmedia/docker-jmeter  and
-# https://github.com/hhcordero/docker-jmeter-server/blob/master/Dockerfile
 FROM alpine:3.18.4
 
-
+# Init JMeter & tools
 ARG JMETER_VERSION="5.6.2"
 ARG CMDRUNNER_VERSION="2.3"
 ARG JMETER_PMANAGER_VERSION="1.9"
-ARG JMETER_JPGC_CASUTG="2.10"
+ARG JMETER_PLUGINS="jpgc-csl=0.1,jpgc-casutg=2.10"
+
+# Setup test settings
 ARG JMETER_RESULTS_FOLDER="/opt/test_results"
+ARG JMETER_SCRIPTS_FOLDER="/opt/scripts"
+ARG JMETER_TEST_SCRIPT="init.jmx"
+ARG JMETER_TEST_SETTINGS="init.properties"
 ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
 ENV JMETER_CUSTOM_PLUGINS_FOLDER /plugins
 ENV	JMETER_BIN	${JMETER_HOME}/bin
 ENV	JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
 ENV JMETER_RESULTS ${JMETER_RESULTS_FOLDER}
+ENV JMETER_SCRIPTS ${JMETER_SCRIPTS_FOLDER}
+ENV JMETER_TEST_SCRIPT_NAME ${JMETER_TEST_SCRIPT}
+ENV JMETER_TEST_SETTINGS_NAME ${JMETER_TEST_SETTINGS}
 
 # Install extra packages
 # Set TimeZone, See: https://github.com/gliderlabs/docker-alpine/issues/136#issuecomment-612751142
@@ -37,15 +43,18 @@ RUN wget https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/${JMETER_P
   && wget https://repo1.maven.org/maven2/kg/apc/cmdrunner/${CMDRUNNER_VERSION}/cmdrunner-${CMDRUNNER_VERSION}.jar \
   && mv ./cmdrunner-${CMDRUNNER_VERSION}.jar ${JMETER_HOME}/lib \
   && java -cp ${JMETER_HOME}/lib/ext/jmeter-plugins-manager-${JMETER_PMANAGER_VERSION}.jar org.jmeterplugins.repository.PluginManagerCMDInstaller \
-  && ${JMETER_HOME}/bin/PluginsManagerCMD.sh install jpgc-casutg=${JMETER_JPGC_CASUTG}
+  && ${JMETER_HOME}/bin/PluginsManagerCMD.sh install ${JMETER_PLUGINS}
 
 # Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN
 
-COPY src/ /opt/scripts/
-# Entrypoint has same signature as "jmeter" command
+# Copy JMeter test scripts and data
+COPY src/ ${JMETER_SCRIPTS_FOLDER}/
+
+# Entrypoint start the JMeter test
 COPY entrypoint.sh /
 
+# Setup work dir
 WORKDIR	${JMETER_HOME}
 
 # Creatre dir to map the test results
