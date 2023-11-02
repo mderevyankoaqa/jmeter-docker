@@ -57,5 +57,5 @@ echo jmeterLogFilePath is $jmeterLogFilePath
 
 # Start Test
 echo start Jmeter script
-jmeter ${EXTRA_ARGS} $@ -n -t $jmeterScriptpath -l $jmeterResultFilePath -j $jmeterLogFilePath -p $jmeterCustomPropFilePath -Jjmeter.reportgenerator.temp_dir=$reportTmpFolderName -e -o $reportFolderName
+jmeter ${EXTRA_ARGS} $@ -n -t $jmeterScriptpath -l $jmeterResultFilePath -j $jmeterLogFilePath -p $jmeterCustomPropFilePath -Jjmeter.reportgenerator.temp_dir=$reportTmpFolderName -JCookieManager.save.cookies=true -e -o $reportFolderName
 echo "END Running Jmeter on `date`"

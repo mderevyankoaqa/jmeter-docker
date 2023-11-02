@@ -9,8 +9,8 @@ ARG JMETER_PLUGINS="jpgc-csl=0.1,jpgc-casutg=2.10"
 # Setup test settings
 ARG JMETER_RESULTS_FOLDER="/opt/test_results"
 ARG JMETER_SCRIPTS_FOLDER="/opt/scripts"
-ARG JMETER_TEST_SCRIPT="init.jmx"
-ARG JMETER_TEST_SETTINGS="init.properties"
+ARG JMETER_TEST_SCRIPT="smoke.jmx"
+ARG JMETER_TEST_SETTINGS="smoke.properties"
 ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
 ENV JMETER_CUSTOM_PLUGINS_FOLDER /plugins
 ENV	JMETER_BIN	${JMETER_HOME}/bin

@@ -3,13 +3,18 @@ services:
   jmeter-runner:
     build:
       context: .
-      dockerfile: Dockerfile       
-      args:
-        - JMETER_TEST_SCRIPT=${JMETER_TEST_SCRIPT}
-        - JMETER_TEST_SETTINGS=${JMETER_TEST_SETTINGS}
-    image: jmeter
-    container_name: jmeter-runner 
+      dockerfile: Dockerfile
+    container_name: jmeter-runner
     volumes:
-      - /opt/jmeter_automation/results:/opt/test_results
+      - /opt/jmeter_automation/test_results/:/opt/test_results
     env_file:
       - .env
+
+  nginx:
+    image: "nginx:stable-alpine3.17-slim"
+    container_name: jmeter_nginx
+    ports:
+      - "8082:8082"
+    volumes:
+      - /opt/jmeter_automation/test_results/:/opt/jmeter_automation/test_results/
+      - ./nginx_jmeter_results.conf:/etc/nginx/conf.d/jmeter_results.conf
